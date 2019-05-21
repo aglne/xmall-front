@@ -42,28 +42,27 @@
     </section>
     
     <section class="w mt30 clearfix">
-      <y-shelf title="我要捐赠">
+      <y-shelf :title="thankPanel.name">
         <div slot="content" class="hot">
-          <mall-goods :msg="item" v-for="(item,i) in hot" :key="i"></mall-goods>
+          <mall-goods :msg="item" v-for="(item,i) in thankPanel.panelContents" :key="i"></mall-goods>
         </div>
       </y-shelf>
     </section>
 
-    <div id="SOHUCS" sid="123456" style="width:1218px;"></div>
+    <div id="comment" style="width: 1220px;margin: 0 auto;"></div>
   </div>
 </template>
 <script>
-  import { productHome, thanksList } from '/api/index.js'
+  import { thank, thanksList } from '/api/index.js'
   import YShelf from '/components/shelf'
   import product from '/components/product'
   import mallGoods from '/components/mallGoods'
-  require('../../../static/changyan/changyan.js')
+  import 'gitment/style/default.css'
+  import Gitment from 'gitment'
   export default {
     data () {
       return {
-        banner: {},
-        floors: [],
-        hot: [],
+        thankPanel: [],
         tableData: [],
         currentPage: 1,
         pageSize: 10,
@@ -94,19 +93,27 @@
           this.tableData = res.result.data
           this.total = res.result.recordsTotal
         })
+      },
+      initGitment () {
+        const gitment = new Gitment({
+          id: '1',
+          owner: 'Exrick',
+          repo: 'xmall-comments',
+          oauth: {
+            client_id: 'd52e48ce99ee4e8fb412',
+            client_secret: 'f4154230d52f3a7d6b7695cb0ae89fe76b76121d'
+          }
+        })
+        gitment.render('comment')
       }
     },
     mounted () {
-      productHome().then(res => {
+      thank().then(res => {
         let data = res.result
-        this.floors = data.homeFloors
-        this.hot = data.homeHot
+        this.thankPanel = data[0]
       })
       this._thanksList()
-      window.changyan.api.config({
-        appid: 'cyrV7vlR4',
-        conf: 'prod_3163726f95fdac5ad0531c2344fc86ea'
-      })
+      this.initGitment()
     },
     components: {
       YShelf,

@@ -2,25 +2,24 @@
   <div class="good-item">
     <div style="">
       <div class="good-img">
-        <router-link :to="'goodsDetails?productId='+msg.productId">
-          <img v-lazy="msg.productImageBig" :alt="msg.productName">
-        </router-link>
+        <a @click="openProduct(msg.productId)">
+          <img v-lazy="msg.productImageBig" :alt="msg.productName" :key="msg.productImageBig">
+        </a>
       </div>
       <h6 class="good-title" v-html="msg.productName">{{msg.productName}}</h6>
       <h3 class="sub-title ellipsis">{{msg.subTitle}}</h3>
       <div class="good-price pr">
         <div class="ds pa">
-          <router-link :to="'goodsDetails?productId='+msg.productId">
+          <a @click="openProduct(msg.productId)">
             <y-button text="查看详情" style="margin: 0 5px"></y-button>
-          </router-link>
+          </a>
           <y-button text="加入购物车"
                     style="margin: 0 5px"
                     @btnClick="addCart(msg.productId,msg.salePrice,msg.productName,msg.productImageBig)"
                     classStyle="main-btn"
           ></y-button>
         </div>
-        <p><span style="font-size: 16px">￥</span>
-          {{msg.salePrice}}</p>
+        <p><span style="font-size:14px">￥</span>{{Number(msg.salePrice).toFixed(2)}}</p>
       </div>
     </div>
   </div>
@@ -32,7 +31,9 @@
   import { getStore } from '/utils/storage'
   export default {
     props: {
-      msg: {}
+      msg: {
+        salePrice: 0
+      }
     },
     data () {
       return {}
@@ -41,6 +42,9 @@
       ...mapMutations(['ADD_CART', 'ADD_ANIMATION', 'SHOW_CART']),
       goodsDetails (id) {
         this.$router.push({path: 'goodsDetails/productId=' + id})
+      },
+      openProduct (id) {
+        window.open('//' + window.location.host + '/#/goodsDetails?productId=' + id)
       },
       addCart (id, price, name, img) {
         if (!this.showMoveImg) {     // 动画是否在运动
@@ -112,8 +116,10 @@
       height: 30px;
       text-align: center;
       line-height: 30px;
-      color: #e4393c;
-      font-size: 20px;
+      color: #d44d44;
+      font-family: Arial;
+      font-size: 18px;
+      font-weight: 700;
     }
     .good-title {
       line-height: 1.2;
